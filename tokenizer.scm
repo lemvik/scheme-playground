@@ -37,10 +37,10 @@
     (let-values ([(out done) (open-string-output-port)])
       (put-char out (get-char source)) ; This character is already validated by calling code.
       (let loop ([has-dot #f])
-        (let ([char (get-char source)])
+        (let ([char (peek-char source)])
           (cond [(eof-object? char) (string->number (done) 10)]
-                [(char-numeric? char) (put-char out char) (loop has-dot)]
-                [(and (char=? char #\.) (not has-dot)) (put-char out char) (loop #t)]
+                [(char-numeric? char) (get-char source) (put-char out char) (loop has-dot)]
+                [(and (char=? char #\.) (not has-dot)) (get-char source) (put-char out char) (loop #t)]
                 [else (string->number (done) 10)])))))
 
   ;; Tokenizes given input source via given callbacks
@@ -58,7 +58,7 @@
                     need-more?)
     (let loop ()
       (let ([char (peek-char source)])
-        (cond [(need-more?) #t]
+        (cond [(not (need-more?)) #t]
               [(eof-object? char) #f]
               [(char-whitespace? char) (get-char source) (loop)]
               [(char? char)

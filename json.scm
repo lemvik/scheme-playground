@@ -1,3 +1,4 @@
+#!chezscheme
 ; -*- geiser-scheme-implementation: chez -*-
 
 ;;;;
@@ -6,10 +7,17 @@
 
 (library (json (0 1 0))
   (export make-json-number
+          make-json-null
           make-json-string
           make-json-bool
           make-json-array
           make-json-object
+          json-value-null?
+          json-value-number?
+          json-value-string?
+          json-value-bool?
+          json-value-array?
+          json-value-object?
           json-number-value
           json-string-value
           json-bool-value
