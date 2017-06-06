@@ -23,10 +23,12 @@
           json-bool-value
           json-object-get
           json-object-set!
+          json-object-empty?
           json-array-get
           json-array-set!
           json-array-push!
           json-array-pop!
+          json-array-empty?
           json->string)
   (import (rnrs)
           (rvector))
@@ -160,6 +162,10 @@
     (ensure-json-value-of-type object json-object)
     (hashtable-set! (json-value-value object) key (object->json-value value)))
 
+  (define (json-object-empty? object)
+    (ensure-json-value-of-type object json-object)
+    (zero? (hashtable-size (json-value-value object))))
+
   ;; Retrieves value stored in a JSON array at given index.
   (define (json-array-get array index)
     (ensure-json-value-of-type array json-array)
@@ -179,6 +185,11 @@
   (define (json-array-pop! array)
     (ensure-json-value-of-type array json-array)
     (rvector-pop! (json-value-value array)))
+
+  ;; Checks if the json array is empty
+  (define (json-array-empty? array)
+    (ensure-json-value-of-type array json-array)
+    (rvector-empty? (json-value-value array)))
 
   ;; Escape JSON string.
   (define (json-escape-string str)
