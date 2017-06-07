@@ -4,7 +4,7 @@
 ;;;; Json tokenizer library.
 ;;;;
 
-(library (json-tokenizer (0 1 0))
+(library (json tokenizer)
   (export tokenize)
   (import (rnrs))
 

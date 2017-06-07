@@ -5,7 +5,7 @@
 ;;;; JSON Scheme library specification.
 ;;;;
 
-(library (json (0 1 0))
+(library (json base)
   (export make-json-number
           make-json-null
           make-json-string
@@ -29,9 +29,11 @@
           json-array-push!
           json-array-pop!
           json-array-empty?
+          json->scheme
           json->string)
   (import (rnrs)
-          (rvector))
+          (portability base)
+          (containers rvector))
 
   ;; Enumeration of possible json values. Constructor json-type-union is not exposed as
   ;; there is no sense in having value with set of types.
@@ -191,8 +193,48 @@
     (ensure-json-value-of-type array json-array)
     (rvector-empty? (json-value-value array)))
 
+  ;; Type-case for JSON values.
+  (define-syntax json-type-case
+    (syntax-rules ()
+      ([_ val (t1 e1 ...) ...]
+       (let ([t (json-value-type val)])
+         (case t 
+           ((json-type t1) e1 ...)
+           ...
+           (else (raise (make-type-mismatch t '(t1 ...)))))))))
+
+  ;; Special value specifying value equal to JSON null.
+  (define +json-null+ (gensym "json-null"))
+
+  ;; Recursively converts JSON value into scheme objects.
+  ;; Rules are:
+  ;; 1. Strings, numbers and booleans are converted into Scheme values directly
+  ;; 2. Null values are converted into a special unique value equal to constant +json-null+
+  ;; 3. Objects are recursively converted into hashtables with string keys
+  ;; 4. Arrays are converted into resizable vectors.
+  (define (json->scheme val)
+    (let ([contained-value (json-value-value val)])
+      (json-type-case val
+        [json-number contained-value]
+        [json-bool contained-value]
+        [json-string contained-value]
+        [json-null +json-null+]
+        [json-object (let ([new-hash (make-hashtable (hashtable-hash-function contained-value)
+                                                     (hashtable-equivalence-function contained-value))])
+                       (let-values ([(keys vals) (hashtable-entries contained-value)])
+                         (vector-for-each (lambda (k v)
+                                            (hashtable-set! new-hash k v))
+                                          keys
+                                          (vector-map json->scheme vals)))
+                       new-hash)]
+        [json-array (let ([new-rvec (make-rvector (rvector-length contained-value))])
+                      (rvector-for-each contained-value 
+                                        (lambda (el) (rvector-push! new-rvec (json->scheme el))))
+                      new-rvec)])))
+
   ;; Escape JSON string.
   (define (json-escape-string str)
+    ; TODO: perform actual JSON string escape.
     str)
 
   ;; Converts JSON value to a string.

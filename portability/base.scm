@@ -4,6 +4,7 @@
 ;;;; A re-export of chezscheme's format library.
 ;;;;
 
-(library (format (0 1 0))
-  (export format)
+(library (portability base)
+  (export format
+          gensym)
   (import (chezscheme)))

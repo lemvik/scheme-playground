@@ -4,13 +4,13 @@
 ;;;; Simple stream parser for JSON files.
 ;;;;
 
-(library (json-parser (0 1 0))
+(library (json parser)
   (export parse-json)
   (import (rnrs)
-          (format)
-          (stack)
-          (json)
-          (json-tokenizer))
+          (portability base)
+          (containers stack)
+          (json base)
+          (json tokenizer))
 
   ;; Condition that fires up when there is a parsing error.
   (define-condition-type &json-parse-error &condition make-parse-error parse-error?

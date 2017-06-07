@@ -4,7 +4,7 @@
 ;;;; Scheme stack implementation.
 ;;;;
 
-(library (stack (0 1 0))
+(library (containers stack)
   (export make-stack
           stack-push!
           stack-pop!
@@ -12,16 +12,16 @@
           stack-empty?
           stack-display)
   (import (rnrs)
-          (format)
-          (rvector))
+          (portability base)
+          (containers rvector))
 
   ;; Default capacity for the stack.
-  (define +default-stack-capacity+ 10)
+  (define default-stack-capacity 10)
 
   ;; Creates an empty stack.
   (define make-stack
     (case-lambda
-      [() (make-rvector +default-stack-capacity+)]
+      [() (make-rvector default-stack-capacity)]
       [rest (let ([s (make-stack)])
               (for-each (lambda (e) (stack-push! s e))
                         rest)

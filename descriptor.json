@@ -1,0 +1,8 @@
+{
+    "source-directory"  : ".",
+    "build-directory"   : "build",
+    "whole-program-opt" : true,
+    "entry-point"       : "json-reader",
+    "output-file"       : "json-reader",
+    "opt-level"         : 3
+}

@@ -4,7 +4,7 @@
 ;;;; Utils for JSON library.
 ;;;;
 
-(library (rvector (0 1 0))
+(library (containers rvector)
   (export make-rvector
           rvector?
           rvector-ref
@@ -17,9 +17,10 @@
           rvector-top
           rvector-pop!
           rvector-for-each
-          rvector-display)
+          rvector-display
+          rvector->list)
   (import (rnrs)
-          (format))
+          (portability base))
 
   ;; Copies contents of the source vector delimited by source-start and source-end into
   ;; target vector from target-start. Raises a condition if such copy is impossible.
@@ -129,4 +130,16 @@
                                  (format out "~a~a" sep el)
                                  (set! sep ","))))
       (format out "}")
-      (done))))
+      (done)))
+
+  ;; Converts given resizable vector into a list.
+  ;; Second form applies mapping function to each element of the vector during conversion.
+  (define rvector->list
+    (case-lambda
+      [(rvec)
+       (rvector->list rvec (lambda (x) x))]
+      [(rvec f)
+       (let ([result (list)])
+         (rvector-for-each rvec (lambda (e) (set! result (cons (f e) result))))
+         (reverse result))])))
+       
