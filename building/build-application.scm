@@ -66,7 +66,7 @@
             (when wpo?
               (let ([wpo-file (string-append object-file ".wpo")]
                     [wpo-program (string-append object-file ".whole")])
-                (compile-whole-program wpo-file wpo-file wpo-program))))))))
+                (compile-whole-program wpo-file wpo-program))))))))
 
   ;; Returns a list of libraries that should be compiled for the program in order
   ;; they should be compiled

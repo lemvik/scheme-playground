@@ -9,6 +9,7 @@
   (export with-glfw-window
           in-event-loop)
   (import (chezscheme)
+          (ffi base)
           (opengl os)
           (opengl raw))
 
@@ -34,15 +35,15 @@
                           ref
                           (glfw-window-window ref)))))
 
-  (define glfw-init                 (foreign-procedure "glfwInit" () boolean))
-  (define glfw-window-hint          (foreign-procedure "glfwWindowHint" (int int) void))
-  (define glfw-create-window        (foreign-procedure "glfwCreateWindow" (int int string uptr uptr) uptr))
-  (define glfw-destroy-window       (foreign-procedure "glfwDestroyWindow" (uptr) void))
-  (define glfw-terminate            (foreign-procedure "glfwTerminate" () void))
-  (define glfw-make-context-current (foreign-procedure "glfwMakeContextCurrent" (uptr) void))
-  (define glfw-window-should-close? (foreign-procedure "glfwWindowShouldClose" (uptr) boolean))
-  (define glfw-swap-buffers         (foreign-procedure "glfwSwapBuffers" (uptr) void))
-  (define glfw-poll-events          (foreign-procedure "glfwPollEvents" () void))
+  (define glfw-init                 (lazy-foreign-procedure "glfwInit" () boolean))
+  (define glfw-window-hint          (lazy-foreign-procedure "glfwWindowHint" (int int) void))
+  (define glfw-create-window        (lazy-foreign-procedure "glfwCreateWindow" (int int string uptr uptr) uptr))
+  (define glfw-destroy-window       (lazy-foreign-procedure "glfwDestroyWindow" (uptr) void))
+  (define glfw-terminate            (lazy-foreign-procedure "glfwTerminate" () void))
+  (define glfw-make-context-current (lazy-foreign-procedure "glfwMakeContextCurrent" (uptr) void))
+  (define glfw-window-should-close? (lazy-foreign-procedure "glfwWindowShouldClose" (uptr) boolean))
+  (define glfw-swap-buffers         (lazy-foreign-procedure "glfwSwapBuffers" (uptr) void))
+  (define glfw-poll-events          (lazy-foreign-procedure "glfwPollEvents" () void))
 
   ;; Creates a GLFW window with given title and dimensions and runs given operations inside it
   ;; in a glfw-managed loop.

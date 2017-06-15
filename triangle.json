@@ -1,0 +1,8 @@
+{
+    "source-directory"  : ".",
+    "build-directory"   : "build",
+    "whole-program-opt" : true,
+    "entry-point"       : "simple-triangle",
+    "output-file"       : "simple-triangle",
+    "opt-level"         : 3
+}

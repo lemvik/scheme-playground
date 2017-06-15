@@ -1,4 +1,5 @@
 ; -*- geiser-scheme-implementation: chez -*-
+#!chezscheme
 
 ;;;;
 ;;;; Simple application that reads json from given file and outputs _id from expected top-level array.
@@ -8,6 +9,9 @@
         (opengl raw)
         (opengl glfw)
         (opengl primitives))
+
+(load-shared-object "opengl32")
+(load-shared-object "glfw3")
 
 (define +triangle+ '( 0.0  0.5  0.0
                       0.5 -0.5  0.0

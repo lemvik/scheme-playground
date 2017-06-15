@@ -7,7 +7,8 @@
 (library (ffi base)
   (export with-indirection
           with-string-pointer
-          with-pointer-to-string-pointer)
+          with-pointer-to-string-pointer
+          lazy-foreign-procedure)
   (import (chezscheme))
 
   ;; Calls function f with a pointer to given pointer. Useful to create pointers to pointers.
@@ -52,4 +53,14 @@
   (define (with-pointer-to-string-pointer str f)
     (with-string-pointer str
       (lambda (p)
-        (with-indirection p f)))))
+        (with-indirection p f))))
+  
+  ;; Creates lazily initialized foreign-procedure.
+  (define-syntax lazy-foreign-procedure
+    (syntax-rules ()
+      ([_ arg1 ...]
+       (let ([body #f])
+         (lambda args
+           (unless body
+             (set! body (foreign-procedure arg1 ...)))
+           (apply body args)))))))
