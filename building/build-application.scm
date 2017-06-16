@@ -9,6 +9,7 @@
           collect-required-libraries)
   (import (chezscheme)
           (utilities base)
+          (utilities files)
           (containers rvector)
           (graph base)
           (json base)
@@ -37,8 +38,9 @@
             [entry-point (hashtable-require descriptor "entry-point"       (make-build-error "Missing entry-point parameter"))]
             [out-file    (hashtable-require descriptor "output-file"       (make-build-error "Missing output-file parameter"))]
             [opt-level   (hashtable-ref     descriptor "opt-level"         2)]
+            [clean-dir   (hashtable-ref     descriptor "clean-dir"         #t)]
             [source-ext  (hashtable-ref     descriptor "source-ext"        ".scm")])
-        (ensure-directory build-dir)
+        (ensure-directory build-dir clean-dir)
         (parameterize ((library-directories (list (cons source-dir build-dir)))
                        (optimize-level opt-level)
                        (compile-imported-libraries #t)
@@ -54,7 +56,7 @@
                       [library-source (string-append source-dir "/" library-name source-ext)]
                       [library-object (string-append build-dir "/" library-name ".so")]
                       [library-dir (path-parent library-object)])
-                 (ensure-directory library-dir)
+                 (ensure-directory library-dir #f)
                  (compile-library library-source library-object)
                  (when wpo?
                    (let ([library-wpo (string-append build-dir "/" library-name ".wpo")])
@@ -91,7 +93,14 @@
       (topological-sort (reverse-directed-graph (make-directed-graph requirements)))))
 
   ;; Ensures that directory exists.
-  (define (ensure-directory directory-name)
+  (define (ensure-directory directory-name clean?)
     ; TODO: something more clean/sane here.
+    (when clean?
+      (let ([files-to-remove (reverse (topological-sort (make-directed-graph (directory-graph "build"))))])
+        (for-each (lambda (f)
+                    (if (file-directory? f)
+                        (delete-directory f)
+                        (delete-file f)))
+                  files-to-remove)))
     (unless (file-directory? directory-name)
       (mkdir directory-name))))

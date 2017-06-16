@@ -16,43 +16,57 @@
           gl-debug-message-callback
           gl-delete-shader
           gl-draw-arrays
+          gl-draw-elements
           gl-enable
           gl-enable-vertex-attrib-array
           gl-gen-buffers
           gl-gen-vertex-arrays
           gl-get-error
           gl-link-program
+          gl-polygon-mode
           gl-shader-source
           gl-use-program
           gl-vertex-attrib-pointer
           :gl-false
           :gl-true
           :gl-triangles
+          :gl-unsigned-int
           :gl-float
 
           :gl-debug-output
 
           :gl-array-buffer
+          :gl-element-array-buffer
           :gl-static-draw
 
           :gl-fragment-shader
-          :gl-vertex-shader)
+          :gl-vertex-shader
+
+          :gl-front-and-back
+          :gl-line
+          :gl-fill)
   (import (chezscheme)
           (ffi base)
           (opengl os))
 
-  (define :gl-false           #x0)
-  (define :gl-true            #x1)
-  (define :gl-triangles       #x0004)
-  (define :gl-float           #x1406)
+  (define :gl-false                #x0)
+  (define :gl-true                 #x1)
+  (define :gl-triangles            #x0004)
+  (define :gl-unsigned-int         #x1405)
+  (define :gl-float                #x1406)
 
-  (define :gl-debug-output    #x92e0)
+  (define :gl-debug-output         #x92e0)
 
-  (define :gl-array-buffer    #x8892)
-  (define :gl-static-draw     #x88e4)
+  (define :gl-array-buffer         #x8892)
+  (define :gl-element-array-buffer #x8893)
+  (define :gl-static-draw          #x88e4)
 
-  (define :gl-fragment-shader #x8b30)
-  (define :gl-vertex-shader   #x8b31)
+  (define :gl-fragment-shader      #x8b30)
+  (define :gl-vertex-shader        #x8b31)
+
+  (define :gl-front-and-back       #x0408)
+  (define :gl-line                 #x1B01)
+  (define :gl-fill                 #x1B02)
 
   (define gl-attach-shader              (lazy-foreign-procedure (locate-foreign-procedure "glAttachShader") (int int) void))
   (define gl-bind-buffer                (lazy-foreign-procedure (locate-foreign-procedure "glBindBuffer") (int unsigned-int) void))
@@ -65,12 +79,14 @@
   (define gl-debug-message-callback     (lazy-foreign-procedure (locate-foreign-procedure "glDebugMessageCallback") (uptr uptr) void))
   (define gl-delete-shader              (lazy-foreign-procedure (locate-foreign-procedure "glDeleteShader") (int) void))
   (define gl-draw-arrays                (lazy-foreign-procedure "glDrawArrays" (unsigned-int int size_t) void))
+  (define gl-draw-elements              (lazy-foreign-procedure "glDrawElements" (unsigned-int int size_t uptr) void))
   (define gl-enable                     (lazy-foreign-procedure "glEnable" (unsigned-int) void))
   (define gl-enable-vertex-attrib-array (lazy-foreign-procedure (locate-foreign-procedure "glEnableVertexAttribArray") (int) void))
   (define gl-gen-buffers                (lazy-foreign-procedure (locate-foreign-procedure "glGenBuffers") (int u8*) void))
   (define gl-gen-vertex-arrays          (lazy-foreign-procedure (locate-foreign-procedure "glGenVertexArrays") (int u8*) void))
   (define gl-get-error                  (lazy-foreign-procedure "glGetError" () unsigned-int))
   (define gl-link-program               (lazy-foreign-procedure (locate-foreign-procedure "glLinkProgram") (int) void))
+  (define gl-polygon-mode               (lazy-foreign-procedure "glPolygonMode" (unsigned-int unsigned-int) void))
   (define gl-shader-source              (lazy-foreign-procedure (locate-foreign-procedure "glShaderSource") (int int uptr uptr) int))
   (define gl-use-program                (lazy-foreign-procedure (locate-foreign-procedure "glUseProgram") (int) void))
   (define gl-vertex-attrib-pointer      (lazy-foreign-procedure (locate-foreign-procedure "glVertexAttribPointer") (unsigned-int int int int unsigned-int uptr) void)))
